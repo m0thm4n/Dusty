@@ -158,8 +158,8 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	//play commands searchs after !play command
 	//and plays the first result.
-	if strings.HasPrefix(m.Content, "!play") {
-		query := strings.Trim(m.Content, "!play ")
+	if strings.HasPrefix(m.Content, "#play") {
+		query := strings.Trim(m.Content, "#play ")
 		if strings.Compare(query, "") == 0 {
 			return
 		}
@@ -178,8 +178,8 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	if strings.HasPrefix(m.Content, "!list") {
-		link := strings.Trim(m.Content, "!list ")
+	if strings.HasPrefix(m.Content, "#list") {
+		link := strings.Trim(m.Content, "#list ")
 
 		//handle spotify playlist
 		if strings.Contains(link, "spotify") {
@@ -194,8 +194,8 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	//search commands searchs query on yt and if it's
 	//finds anything related plays.
-	if strings.HasPrefix(m.Content, "!search") {
-		query := strings.Trim(m.Content, "!search ")
+	if strings.HasPrefix(m.Content, "#search") {
+		query := strings.Trim(m.Content, "#search ")
 		if query == "" {
 			vi.sendMessageToChannel(m.ChannelID, "Unsufficient query. Try again, with query.")
 			return
@@ -204,23 +204,23 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	//skip commands plays next song
-	if strings.Compare(m.Content, "!skip") == 0 {
+	if strings.Compare(m.Content, "#skip") == 0 {
 		vi.skipSong(m)
 	}
 
 	//stop commands stops playing song
-	if strings.Compare(m.Content, "!stop") == 0 {
+	if strings.Compare(m.Content, "#stop") == 0 {
 		vi.stopSong(m)
 	}
 
-	if strings.Compare(m.Content, "!show") == 0 {
+	if strings.Compare(m.Content, "#show") == 0 {
 		vi.showPlayQueue(m)
 	}
 
-	if strings.Compare(m.Content, "!testreddit") == 0 {
+	if strings.Compare(m.Content, "#testreddit") == 0 {
 	}
 
-	if m.Content[0] == '!' && strings.Count(m.Content, "!") < 2 {
+	if m.Content[0] == '!' && strings.Count(m.Content, "#") < 2 {
 
 		executeCommands(s, m.Message)
 		return
@@ -228,10 +228,10 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 }
 
 func executeCommands(s *discordgo.Session, m *discordgo.Message) {
-	msg := strings.Split(strings.TrimSpace(m.Content), "!")[1]
+	msg := strings.Split(strings.TrimSpace(m.Content), "#")[1]
 
 	if len(msg) > 2 {
-		msg = strings.Split(strings.Split(m.Content, " ")[0], "!")[1]
+		msg = strings.Split(strings.Split(m.Content, " ")[0], "#")[1]
 	}
 
 	switch msg {
