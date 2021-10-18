@@ -8,9 +8,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/hemreari/feanor-dcbot/bot"
-	"github.com/hemreari/feanor-dcbot/config"
-	"github.com/hemreari/feanor-dcbot/youtube"
+	"github.com/m0thm4n/Dusty/bot"
+	"github.com/m0thm4n/Dusty/config"
+	"github.com/m0thm4n/Dusty/youtube"
 )
 
 var cfg config.Config

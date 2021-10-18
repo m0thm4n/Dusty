@@ -16,10 +16,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/hemreari/feanor-dcbot/config"
-	"github.com/hemreari/feanor-dcbot/spotify"
-	"github.com/hemreari/feanor-dcbot/util"
-	"github.com/hemreari/feanor-dcbot/youtube"
+	"github.com/m0thm4n/Dusty/config"
+	"github.com/m0thm4n/Dusty/spotify"
+	"github.com/m0thm4n/Dusty/util"
+	"github.com/m0thm4n/Dusty/youtube"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/hemreari/go-datastructures/queue"
@@ -79,7 +79,7 @@ func InitBot(botToken string, ytAPI *youtube.YoutubeAPI, config *config.Config) 
 
 	dg.AddHandler(ready)
 	dg.AddHandler(messageCreate)
-	dg.AddHandler(guildCreate)
+	// dg.AddHandler(guildCreate)
 
 	err = dg.Open()
 	if err != nil {
@@ -134,19 +134,19 @@ func ready(s *discordgo.Session, event *discordgo.Ready) {
 
 // This function will be called (due to AddHandler above) every time a new
 // guild is joined.
-func guildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
-	if event.Guild.Unavailable {
-		return
-	}
-
-	for _, channel := range event.Guild.Channels {
-		if channel.ID == event.Guild.ID {
-			log.Println(event.Members)
-			_, _ = s.ChannelMessageSend(channel.ID, "Welcome")
-			return
-		}
-	}
-}
+//func guildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
+//	if event.Guild.Unavailable {
+//		return
+//	}
+//
+//	for _, channel := range event.Guild.Channels {
+//		if channel.ID == event.Guild.ID {
+//			log.Println(event.Members)
+//			_, _ = s.ChannelMessageSend(channel.ID, "Welcome")
+//			return
+//		}
+//	}
+//}
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Ignore all messages created by the bot itself
@@ -175,6 +175,20 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 		vi.prepQuery(query, s, m)
 		return
+	}
+
+	if strings.HasPrefix(m.Content, "!list") {
+		link := strings.Trim(m.Content, "!list ")
+
+		//handle spotify playlist
+		if strings.Contains(link, "spotify") {
+			vi.prepSpotifyPlaylist(link, s, m)
+		}
+
+		//handle youtube playlist
+		//if strings.Contains(link, "youtube") {
+		//	vi.prepYoutubePlaylist(link, s, m)
+		//}
 	}
 
 	//search commands searchs query on yt and if it's
@@ -332,7 +346,7 @@ func (vi *VoiceInstance) prepSpotifyPlaylist(url string, s *discordgo.Session, m
 	id := util.GetSpotifyID(url)
 	if strings.Compare(id, "") == 0 {
 		log.Printf("Given URL \"%s\" is not an accepted spotify URL.\n", url)
-		vi.sendMessageToChannel(m.ChannelID, "Unexpected thing happend when playing the link. Try Again.")
+		vi.sendMessageToChannel(m.ChannelID, "Unexpected thing happened when playing the link. Try Again.")
 		return
 	}
 

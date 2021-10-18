@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/hemreari/feanor-dcbot/util"
+	"github.com/m0thm4n/Dusty/util"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
