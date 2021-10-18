@@ -129,7 +129,7 @@ func initSpotifyAPI() *spotify.SpotifyAPI {
 }
 
 func ready(s *discordgo.Session, event *discordgo.Ready) {
-	s.UpdateStatus(0, "Valinor'dan sevgiler.")
+	s.UserUpdateStatus("Valinor'dan sevgiler.")
 }
 
 // This function will be called (due to AddHandler above) every time a new
@@ -217,6 +217,12 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	if strings.Compare(m.Content, "!testreddit") == 0 {
+	}
+
+	if strings.Compare(m.Content, "!playlists") == 1 {
+		user := strings.Join(strings.Split(m.Content, " ")[1:], " ")
+
+		spotify.GetUsersPlaylists(user, s, m)
 	}
 }
 

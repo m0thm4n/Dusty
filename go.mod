@@ -1,14 +1,27 @@
 module github.com/m0thm4n/Dusty
 
-go 1.13
+go 1.17
+
 
 require (
-	github.com/Andreychik32/ytdl v1.0.4 // indirect
-	github.com/bwmarrin/dca v0.0.0-20180611192139-99fdf68b87a1 // indirect
-	github.com/bwmarrin/discordgo v0.20.2
+	cloud.google.com/go v0.94.1 // indirect
+	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/googleapis/gax-go/v2 v2.1.1 // indirect
+	github.com/gorilla/websocket v1.4.0 // indirect
+	go.opencensus.io v0.23.0 // indirect
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
+	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d // indirect
+	golang.org/x/sys v0.0.0-20210917161153-d61c044b1678 // indirect
+	golang.org/x/text v0.3.6 // indirect
+	google.golang.org/appengine v1.6.7 // indirect
+	google.golang.org/genproto v0.0.0-20210917145530-b395a37504d4 // indirect
+	google.golang.org/grpc v1.40.0 // indirect
+	google.golang.org/protobuf v1.27.1 // indirect
+	github.com/bwmarrin/discordgo v0.23.2
 	github.com/hemreari/go-datastructures v1.0.51
-	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
-	golang.org/x/sync v0.0.0-20190423024810-112230192c58
-	google.golang.org/api v0.17.0
-	layeh.com/gopus v0.0.0-20161224163843-0ebf989153aa
+	github.com/zmb3/spotify/v2 v2.0.0
+	golang.org/x/oauth2 v0.0.0-20211005180243-6b3c2da341f1
+	google.golang.org/api v0.58.0
+	layeh.com/gopus v0.0.0-20210501142526-1ee02d434e32
 )

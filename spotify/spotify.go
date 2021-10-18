@@ -4,13 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/bwmarrin/discordgo"
+	"github.com/m0thm4n/Dusty/util"
 	"log"
 	"net/http"
 
-	"github.com/m0thm4n/Dusty/util"
-
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
+
+	"github.com/zmb3/spotify/v2"
+	spotifyauth "github.com/zmb3/spotify/v2/auth"
 )
 
 const (
@@ -357,4 +360,103 @@ func (s *SpotifyAPI) getTrack(id string) (*SpotifySingleTrack, error) {
 	}
 
 	return &spotifySingleTrack, nil
+}
+
+//func completeAuth(w http.ResponseWriter, r *http.Request) {
+//	token, err := auth.Token(state, r)
+//	if err != nil {
+//		http.Error(w, "Couldn't get token", http.StatusForbidden)
+//		log.Fatalln(err)
+//	}
+//
+//	if st := r.FormValue("state"); st != state {
+//		http.NotFound(w, r)
+//		log.Fatalf("State mismatch: %s != %s\n", st, state)
+//	}
+//
+//	// Use the token to get an authenticated client
+//	client := auth.NewClient(token)
+//	fmt.Fprintf(w, "Login Completed!")
+//	ch <- &client
+//}
+//
+//// Auth authenticates with Spotify and refreshes the token
+//func spotifyAuth(s *discordgo.Session, m *discordgo.Message) *spotify.Client {
+//	fmt.Println(s.ClientID, s.ClientSecretID)
+//
+//	if s.ClientID == "" || s.ClientSecretID == "" {
+//		fmt.Println("Please configure your Spotify client ID and secret in the config file at C:\\workspace\\go\\src\\spotify-bot\\")
+//		os.Exit(1)
+//	}
+//
+//	// shouldRefresh, err := cmd.Flags().GetBool("refresh")
+//	// if err != nil {
+//	// 	log.Fatalln(err)
+//	// }
+//
+//	fmt.Println("Getting token...")
+//	auth.SetAuthInfo(s.ClientID, s.ClientSecretID)
+//	http.HandleFunc("/callback", completeAuth)
+//	go http.ListenAndServe(":8888", nil)
+//	url := auth.AuthURL(state)
+//	fmt.Println("Please log in to Spotify by clicking the following link:", url)
+//	_, _ = s.ChannelMessageSend(m.ChannelID, "Please log in to Spotify by clicking the following link: "+url)
+//	//wait for auth to finish
+//	client := <-ch
+//	user, err := client.CurrentUser()
+//	if err != nil {
+//		log.Fatalln(err)
+//	}
+//
+//	// conf.Token = *token
+//	// marshalToken, err := json.Marshal(conf.Token)
+//	if err != nil {
+//		log.Fatalln(err)
+//	}
+//	// viper.Set("auth", string(marshalToken))
+//	// if err := viper.WriteConfigAs(cfgFile); err != nil {
+//	// 	glog.Fatal("Error writing config:", err)
+//	// }
+//	fmt.Println("Login successful as", user.ID)
+//	_, _ = s.ChannelMessageSend(m.ChannelID, "Login successful as "+user.ID)
+//
+//	return client
+//}
+
+
+
+func GetUsersPlaylists(userID string, sess *discordgo.Session, m *discordgo.MessageCreate) {
+	ctx := context.Background()
+
+	//if userID == "" {
+	//	fmt.Fprintf(os.Stderr, "Error: missing user ID\n")
+	//	flag.Usage()
+	//	return nil, err
+	//}
+
+	config := &clientcredentials.Config {
+		ClientID: SpotifyAPI{}.ClientID,
+		ClientSecret: SpotifyAPI{}.ClientID,
+		TokenURL: spotifyauth.TokenURL,
+	}
+
+	token, err := config.Token(context.Background())
+	if err != nil {
+		log.Fatalf("Couldn't get token: %v", err)
+	}
+
+	httpClient := spotifyauth.New().Client(ctx, token)
+
+	client := spotify.New(httpClient)
+
+	user, err := client.GetUsersPublicProfile(ctx, spotify.ID(userID))
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	fmt.Println("User ID:", user.ID)
+	fmt.Println("Display name:", user.DisplayName)
+	fmt.Println("Spotify URI:", string(user.URI))
+	fmt.Println("Endpoint:", user.Endpoint)
+	fmt.Println("Followers:", user.Followers.Count)
 }

@@ -60,6 +60,8 @@ func (y *YoutubeAPI) GetYoutubePlaylist(id string, urlType int) ([]SearchResult,
 //!!!! SOME SEARCH RESULTS ON YT DOESN'T RETURN ID. HANDLE ERROR.
 //FOR NOW I'M DOING IT ON func DownloadVideo.
 func (y *YoutubeAPI) GetVideoID(query string) *SearchResult {
+	part := []string{"id", "snippet"}
+
 	developerKey := y.DeveloperKey
 
 	client := &http.Client{
@@ -72,7 +74,7 @@ func (y *YoutubeAPI) GetVideoID(query string) *SearchResult {
 	}
 
 	// Make the API call to YouTube.
-	call := service.Search.List("id,snippet").
+	call := service.Search.List(part).
 		Q(query).
 		MaxResults(1)
 	response, err := call.Do()
@@ -100,6 +102,8 @@ func (y *YoutubeAPI) GetVideoID(query string) *SearchResult {
 }
 
 func (y *YoutubeAPI) GetVideoResults(query string) *[]SearchResult {
+	part := []string{"id", "snippet"}
+
 	developerKey := y.DeveloperKey
 
 	client := &http.Client{
@@ -113,7 +117,7 @@ func (y *YoutubeAPI) GetVideoResults(query string) *[]SearchResult {
 
 	var results []SearchResult
 
-	call := service.Search.List("id,snippet").Q(query)
+	call := service.Search.List(part).Q(query)
 	response, err := call.Do()
 	if err != nil {
 		log.Println(err)
@@ -139,6 +143,8 @@ func (y *YoutubeAPI) GetVideoResults(query string) *[]SearchResult {
 }
 
 func (y *YoutubeAPI) GetDurationByID(id string) string {
+	part := []string{"id", "contentDetails"}
+
 	devKey := y.DeveloperKey
 
 	client := &http.Client{
@@ -150,7 +156,7 @@ func (y *YoutubeAPI) GetDurationByID(id string) string {
 		log.Fatalf("Error while creating new Youtube client: %v", err)
 	}
 
-	call := service.Videos.List("id,contentDetails").Id(id)
+	call := service.Videos.List(part).Id(id)
 	response, err := call.Do()
 	if err != nil {
 		log.Fatal(err)
@@ -218,6 +224,8 @@ func (y *YoutubeAPI) SearchDownload(query string) (*SearchResult, error) {
 
 //GetInfoByID returns video information about the given video id.
 func (y *YoutubeAPI) GetInfoByID(id string) (*SearchResult, error) {
+	part := []string{"id", "contentDetails", "snippet"}
+
 	devKey := y.DeveloperKey
 
 	client := &http.Client{
@@ -229,7 +237,7 @@ func (y *YoutubeAPI) GetInfoByID(id string) (*SearchResult, error) {
 		return nil, fmt.Errorf("Error while creating new YouTube client: %v", err)
 	}
 
-	call := service.Videos.List("id,contentDetails,snippet").Id(id)
+	call := service.Videos.List(part).Id(id)
 	response, err := call.Do()
 	if err != nil {
 		return nil, fmt.Errorf("Error while making call: %v", err)
@@ -284,6 +292,8 @@ func (y *YoutubeAPI) HandleYoutubePlaylist(id string) ([]SearchResult, error) {
 //getYoutubePlaylistById makes the api request to Youtube Data API to
 //get information about the given playlist ID.
 func (y *YoutubeAPI) getYoutubePlaylistById(id string) (*youtube.PlaylistItemListResponse, error) {
+	part := []string{"snippet"}
+
 	devKey := y.DeveloperKey
 
 	client := &http.Client{
@@ -295,7 +305,7 @@ func (y *YoutubeAPI) getYoutubePlaylistById(id string) (*youtube.PlaylistItemLis
 		return nil, fmt.Errorf("Error while creating new Youtube client: %v", err)
 	}
 
-	call := service.PlaylistItems.List("snippet").PlaylistId(id).MaxResults(DefaultPlaylistItemCount)
+	call := service.PlaylistItems.List(part).PlaylistId(id).MaxResults(DefaultPlaylistItemCount)
 	response, err := call.Do()
 	if err != nil {
 		log.Println(err)
