@@ -220,7 +220,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if strings.Compare(m.Content, "#testreddit") == 0 {
 	}
 
-	if m.Content[0] == '!' && strings.Count(m.Content, "#") < 2 {
+	if m.Content[0] == '#' && strings.Count(m.Content, "#") < 2 {
 
 		executeCommands(s, m.Message)
 		return
@@ -322,7 +322,7 @@ func (vi *VoiceInstance) searchOnYoutube(query string, s *discordgo.Session, m *
 	}
 
 	if !vi.validateUserVoiceState(s, m, retGuild) {
-		log.Printf("Refusing !search command request made by the user %s-%s: Not in the voice channel.\n",
+		log.Printf("Refusing #search command request made by the user %s-%s: Not in the voice channel.\n",
 			m.Author.Username, m.Author.ID)
 		vi.sendMessageToChannel(m.ChannelID, "You have to be in the voice channel to do that command.")
 		return
@@ -349,7 +349,7 @@ func (vi *VoiceInstance) searchOnYoutube(query string, s *discordgo.Session, m *
 		if userResponseInt < 1 && userResponseInt > resultCounter {
 			vi.sendMessageToChannel(m.ChannelID, "Not an available option.")
 		}
-		if strings.HasPrefix(m.Content, "!done") {
+		if strings.HasPrefix(m.Content, "#done") {
 			return
 		}
 		result := resultsMap[userResponseInt]
