@@ -129,7 +129,7 @@ func initSpotifyAPI() *spotify.SpotifyAPI {
 }
 
 func ready(s *discordgo.Session, event *discordgo.Ready) {
-	s.UserUpdateStatus("Valinor'dan sevgiler.")
+	s.UpdateGameStatus(0, "And Dust 2 was never the same.")
 }
 
 // This function will be called (due to AddHandler above) every time a new
