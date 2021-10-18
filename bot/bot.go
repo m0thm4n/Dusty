@@ -5,6 +5,7 @@ import (
 	"container/list"
 	"encoding/binary"
 	"fmt"
+	"github.com/m0thm4n/Dusty/help"
 	"io"
 	"log"
 	"os"
@@ -114,7 +115,7 @@ func InitBot(botToken string, ytAPI *youtube.YoutubeAPI, config *config.Config) 
 		return err
 	}
 
-	log.Println("Feanor is running. Press Ctrl-C to exit.")
+	log.Println("Dusty is running. Press Ctrl-C to exit.")
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
@@ -129,7 +130,7 @@ func initSpotifyAPI() *spotify.SpotifyAPI {
 }
 
 func ready(s *discordgo.Session, event *discordgo.Ready) {
-	s.UpdateGameStatus(0, "And Dust 2 was never the same.")
+	s.UpdateGameStatus(0, "Dust 2 was never the same.")
 }
 
 // This function will be called (due to AddHandler above) every time a new
@@ -219,10 +220,27 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if strings.Compare(m.Content, "!testreddit") == 0 {
 	}
 
-	if strings.Compare(m.Content, "!playlists") == 1 {
+	if m.Content[0] == '!' && strings.Count(m.Content, "!") < 2 {
+
+		executeCommands(s, m.Message)
+		return
+	}
+}
+
+func executeCommands(s *discordgo.Session, m *discordgo.Message) {
+	msg := strings.Split(strings.TrimSpace(m.Content), "!")[1]
+
+	if len(msg) > 2 {
+		msg = strings.Split(strings.Split(m.Content, " ")[0], "!")[1]
+	}
+
+	switch msg {
+	case "getplaylists":
 		user := strings.Join(strings.Split(m.Content, " ")[1:], " ")
 
 		spotify.GetUsersPlaylists(user, s, m)
+	case "help":
+		help.HandleHelpCommand(s, m)
 	}
 }
 

@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"github.com/joho/godotenv"
 	"io"
 	"log"
 	"math/rand"
@@ -350,4 +351,15 @@ func CreateSongFolder() error {
 		}
 		return nil
 	}
+}
+
+// EnvVar function is for reading .env file
+func EnvVar(key string, defaultVal string) string {
+	godotenv.Load(".env")
+	value := os.Getenv(key)
+	if len(value) == 0 {
+		return defaultVal
+	}
+
+	return value
 }

@@ -41,7 +41,7 @@ func banner() {
 func main() {
 	banner()
 	readConfig(&cfg, "config.json")
-	log.Println("Starting Feanor.")
+	log.Println("Starting Dusty.")
 
 	//make api connections
 	youtubeAPI := youtube.NewYoutubeAPI(cfg.Youtube.ApiKey)

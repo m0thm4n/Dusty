@@ -9,3 +9,5 @@ feanor.org
 feanor_main
 *.dca
 dcbot
+.env
+*.m4a.*

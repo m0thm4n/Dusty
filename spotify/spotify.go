@@ -425,7 +425,10 @@ func (s *SpotifyAPI) getTrack(id string) (*SpotifySingleTrack, error) {
 
 
 
-func GetUsersPlaylists(userID string, sess *discordgo.Session, m *discordgo.MessageCreate) {
+func GetUsersPlaylists(userID string, s *discordgo.Session, m *discordgo.Message) {
+	clientID := util.EnvVar("CLIENT_ID", "")
+	secret := util.EnvVar("CLIENT_SECRET", "")
+
 	ctx := context.Background()
 
 	//if userID == "" {
@@ -435,8 +438,8 @@ func GetUsersPlaylists(userID string, sess *discordgo.Session, m *discordgo.Mess
 	//}
 
 	config := &clientcredentials.Config {
-		ClientID: SpotifyAPI{}.ClientID,
-		ClientSecret: SpotifyAPI{}.ClientID,
+		ClientID: clientID,
+		ClientSecret: secret,
 		TokenURL: spotifyauth.TokenURL,
 	}
 
@@ -449,14 +452,17 @@ func GetUsersPlaylists(userID string, sess *discordgo.Session, m *discordgo.Mess
 
 	client := spotify.New(httpClient)
 
-	user, err := client.GetUsersPublicProfile(ctx, spotify.ID(userID))
+	playlists, err := client.GetPlaylistsForUser(ctx, userID)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	fmt.Println("User ID:", user.ID)
-	fmt.Println("Display name:", user.DisplayName)
-	fmt.Println("Spotify URI:", string(user.URI))
-	fmt.Println("Endpoint:", user.Endpoint)
-	fmt.Println("Followers:", user.Followers.Count)
+	// fmt.Println(playlists.Playlists)
+
+	for _, v := range playlists.Playlists {
+		fmt.Println(v.Name + " - " + v.ExternalURLs["spotify"])
+		playlist := fmt.Sprintf("%s - %s", v.Name, v.ExternalURLs["spotify"])
+
+		_, _ = s.ChannelMessageSend(m.ChannelID, playlist)
+	}
 }
