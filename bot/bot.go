@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"Dusty/vars"
 	"bufio"
 	"container/list"
 	"encoding/binary"
@@ -75,7 +76,7 @@ func InitBot(botToken string, ytAPI *youtube.YoutubeAPI, config *config.Config) 
 
 	dg, err := discordgo.New("Bot " + botToken)
 	if err != nil {
-		return fmt.Errorf("Error while creating discord session: %v", err)
+		return vars.Logger.Errorf("Error while creating discord session: %v", err)
 	}
 
 	dg.AddHandler(ready)
@@ -84,7 +85,7 @@ func InitBot(botToken string, ytAPI *youtube.YoutubeAPI, config *config.Config) 
 
 	err = dg.Open()
 	if err != nil {
-		return fmt.Errorf("Error while opening discord session: %v", err)
+		return vars.Logger.Errorf("Error while opening discord session: %v", err)
 	}
 
 	playQueue := createNewQueue()
@@ -249,14 +250,14 @@ func (vi *VoiceInstance) validateMessage(s *discordgo.Session, m *discordgo.Mess
 	c, err := s.State.Channel(m.ChannelID)
 	if err != nil {
 		// Could not find channel.
-		return nil, fmt.Errorf("Couldn't find channel: %v\n", err)
+		return nil, vars.Logger.Errorf("Couldn't find channel: %v\n", err)
 	}
 
 	// Find the guild for that channel.
 	g, err := s.State.Guild(c.GuildID)
 	if err != nil {
 		// Could not find guild.
-		return nil, fmt.Errorf("Couldn't find guild: %v\n", err)
+		return nil, vars.Logger.Errorf("Couldn't find guild: %v\n", err)
 	}
 
 	return g, nil
@@ -279,7 +280,7 @@ func (vi *VoiceInstance) channelVoiceJoin(s *discordgo.Session, m *discordgo.Mes
 		if vs.UserID == m.Author.ID {
 			dgv, err := s.ChannelVoiceJoin(g.ID, vs.ChannelID, false, true)
 			if err != nil {
-				fmt.Printf("Couldn't join the voice channel: %v\n", err)
+				vars.Logger.Infof("Couldn't join the voice channel: %v\n", err)
 				return false
 			}
 			vi.dgv = dgv
@@ -297,7 +298,7 @@ func (vi *VoiceInstance) channelVoiceJoin(s *discordgo.Session, m *discordgo.Mes
 func (vi *VoiceInstance) validateMessageAndJoinVoiceChannel(s *discordgo.Session, m *discordgo.MessageCreate) bool {
 	guild, err := vi.validateMessage(s, m)
 	if err != nil {
-		log.Println(err)
+		vars.Logger.Info(err)
 		return false
 	}
 
@@ -343,7 +344,7 @@ func (vi *VoiceInstance) searchOnYoutube(query string, s *discordgo.Session, m *
 	s.AddHandlerOnce(func(s *discordgo.Session, m *discordgo.MessageCreate) {
 		userResponseInt, err := strconv.Atoi(m.Content)
 		if err != nil {
-			log.Println(err)
+			var.Logger.Info(err)
 			vi.sendMessageToChannel(m.ChannelID, "I accept only numbers.")
 		}
 		if userResponseInt < 1 && userResponseInt > resultCounter {
@@ -369,7 +370,7 @@ func (vi *VoiceInstance) prepSpotifyPlaylist(url string, s *discordgo.Session, m
 
 	id := util.GetSpotifyID(url)
 	if strings.Compare(id, "") == 0 {
-		log.Printf("Given URL \"%s\" is not an accepted spotify URL.\n", url)
+		vars.Logger.Infof("Given URL \"%s\" is not an accepted spotify URL.\n", url)
 		vi.sendMessageToChannel(m.ChannelID, "Unexpected thing happened when playing the link. Try Again.")
 		return
 	}
@@ -386,7 +387,7 @@ func (vi *VoiceInstance) prepSpotifyPlaylist(url string, s *discordgo.Session, m
 
 	playlistList, err := spotifyAPI.GetSpotifyPlaylist(id, urlType)
 	if err != nil {
-		log.Printf("Error while getting Spotify playlist tracks: %v", err)
+		vars.Logger.Infof("Error while getting Spotify playlist tracks: %v", err)
 		vi.sendMessageToChannel(m.ChannelID, "Unexpected thing is happened. Please, Try again.")
 		return
 	}
@@ -442,7 +443,7 @@ func (vi *VoiceInstance) prepYoutubePlaylist(url string, s *discordgo.Session, m
 
 	playlistList, err := yt.GetYoutubePlaylist(playlistID, urlType)
 	if err != nil {
-		log.Println(err)
+		vars.Logger.Infof(err)
 		vi.sendMessageToChannel(m.ChannelID, "Unexpected thing when playing playlist. Try Again.")
 		return
 	}
@@ -478,7 +479,7 @@ func (vi *VoiceInstance) prepQuery(query string, s *discordgo.Session, m *discor
 	if vi.isPlaying == false {
 		err := vi.downloadPlayQuery(query, m.ChannelID)
 		if err != nil {
-			log.Println(err)
+			vars.Logger.Info(err)
 			return
 		}
 	}
@@ -496,7 +497,7 @@ func (vi *VoiceInstance) prepPlay(query string, s *discordgo.Session, m *discord
 	// Find the channel where the message came from.
 	c, err := s.State.Channel(m.ChannelID)
 	if err != nil {
-		log.Printf("Couldn't find channel: %v\n", err)
+		vars.Logger.Infof("Couldn't find channel: %v\n", err)
 		// Could not find channel.
 		return
 	}
@@ -504,7 +505,7 @@ func (vi *VoiceInstance) prepPlay(query string, s *discordgo.Session, m *discord
 	// Find the guild for that channel.
 	g, err := s.State.Guild(c.GuildID)
 	if err != nil {
-		log.Printf("Couldn't find guild: %v\n", err)
+		vars.Logger.Infof("Couldn't find guild: %v\n", err)
 		// Could not find guild.
 		return
 	}
@@ -512,7 +513,7 @@ func (vi *VoiceInstance) prepPlay(query string, s *discordgo.Session, m *discord
 	if vi.isPlaying == false {
 		err = vi.downloadPlayQuery(query, m.ChannelID)
 		if err != nil {
-			log.Println(err)
+			vars.Logger.Info(err)
 			return
 		}
 	}
@@ -527,7 +528,7 @@ func (vi *VoiceInstance) prepPlay(query string, s *discordgo.Session, m *discord
 			dgv, err := s.ChannelVoiceJoin(g.ID, vs.ChannelID, false, true)
 			vi.dgv = dgv
 			if err != nil {
-				fmt.Printf("Couldn't join the voice channel: %v\n", err)
+				vars.Logger.Infof("Couldn't join the voice channel: %v\n", err)
 				return
 			}
 			vi.playQueueFunc(m.ChannelID)
@@ -544,7 +545,7 @@ func (vi *VoiceInstance) prepSearchSelectionPlay(searchResult *youtube.SearchRes
 	if vi.isPlaying == false {
 		err := vi.downloadSelection(searchResult, m.ChannelID)
 		if err != nil {
-			log.Println(err)
+			vars.Logger.Info(err)
 			return
 		}
 	}
@@ -560,7 +561,7 @@ func (vi *VoiceInstance) prepSearchSelectionPlay(searchResult *youtube.SearchRes
 func (vi *VoiceInstance) playQueueFunc(channelID string) {
 	err := vi.dgv.Speaking(true)
 	if err != nil {
-		log.Println("Couldn't set speaking", err)
+		vars.Logger.Infof("Couldn't set speaking", err)
 	}
 
 	defer func() {
@@ -626,7 +627,7 @@ func (vi *VoiceInstance) playQueueFunc(channelID string) {
 		} else {
 			select {
 			case playStat := <-chanPlayStat:
-				log.Println("chanPlayStat: ", playStat)
+				vars.Logger.Info("chanPlayStat: ", playStat)
 			default:
 				continue
 			}
@@ -647,13 +648,13 @@ func (vi *VoiceInstance) processDownloadQueue(channelID string) {
 
 	nextItem, err := vi.downloadQueue.Get(1)
 	if err != nil {
-		log.Println(err)
+		vars.Logger.Info(err)
 		return
 	}
 
 	songInstance := getSongInstanceFromInterface(nextItem[0])
 	if songInstance == nil {
-		log.Println("Error while converting interface {} to SongInstance{}.")
+		vars.Logger.Info("Error while converting interface {} to SongInstance{}.")
 		return
 	}
 
@@ -663,13 +664,13 @@ func (vi *VoiceInstance) processDownloadQueue(channelID string) {
 	if strings.Compare(songInstance.videoID, "") != 0 {
 		err = vi.downloadID(songInstance, channelID)
 		if err != nil {
-			log.Println(err)
+			vars.Logger.Info(err)
 			return
 		}
 	} else {
 		err = vi.downloadQuery(songInstance, channelID)
 		if err != nil {
-			log.Println(err)
+			vars.Logger.Info(err)
 			return
 		}
 	}

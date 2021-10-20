@@ -15,7 +15,7 @@ require (
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
 	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d // indirect
 	golang.org/x/oauth2 v0.0.0-20211005180243-6b3c2da341f1
-	golang.org/x/sys v0.0.0-20210917161153-d61c044b1678 // indirect
+	golang.org/x/sys v0.0.0-20211019181941-9d821ace8654 // indirect
 	golang.org/x/text v0.3.6 // indirect
 	google.golang.org/api v0.58.0
 	google.golang.org/appengine v1.6.7 // indirect
@@ -29,4 +29,5 @@ require (
 	github.com/BrianAllred/goydl v0.0.0-20200922193158-6eeb623d0fe8 // indirect
 	github.com/KeluDiao/gotube v0.0.0-20190406022055-2e08b0c4301f // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
+	github.com/sirupsen/logrus v1.8.1 // indirect
 )
