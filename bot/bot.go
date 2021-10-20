@@ -1,12 +1,12 @@
 package bot
 
 import (
-	"Dusty/vars"
 	"bufio"
 	"container/list"
 	"encoding/binary"
 	"fmt"
 	"github.com/m0thm4n/Dusty/help"
+	"github.com/m0thm4n/Dusty/vars"
 	"io"
 	"log"
 	"os"
@@ -76,7 +76,7 @@ func InitBot(botToken string, ytAPI *youtube.YoutubeAPI, config *config.Config) 
 
 	dg, err := discordgo.New("Bot " + botToken)
 	if err != nil {
-		return vars.Logger.Errorf("Error while creating discord session: %v", err)
+		vars.Logger.Errorf("Error while creating discord session: %v", err)
 	}
 
 	dg.AddHandler(ready)
@@ -85,7 +85,7 @@ func InitBot(botToken string, ytAPI *youtube.YoutubeAPI, config *config.Config) 
 
 	err = dg.Open()
 	if err != nil {
-		return vars.Logger.Errorf("Error while opening discord session: %v", err)
+		vars.Logger.Errorf("Error while opening discord session: %v", err)
 	}
 
 	playQueue := createNewQueue()
@@ -250,14 +250,14 @@ func (vi *VoiceInstance) validateMessage(s *discordgo.Session, m *discordgo.Mess
 	c, err := s.State.Channel(m.ChannelID)
 	if err != nil {
 		// Could not find channel.
-		return nil, vars.Logger.Errorf("Couldn't find channel: %v\n", err)
+		vars.Logger.Errorf("Couldn't find channel: %v\n", err)
 	}
 
 	// Find the guild for that channel.
 	g, err := s.State.Guild(c.GuildID)
 	if err != nil {
 		// Could not find guild.
-		return nil, vars.Logger.Errorf("Couldn't find guild: %v\n", err)
+		vars.Logger.Errorf("Couldn't find guild: %v\n", err)
 	}
 
 	return g, nil
@@ -344,7 +344,7 @@ func (vi *VoiceInstance) searchOnYoutube(query string, s *discordgo.Session, m *
 	s.AddHandlerOnce(func(s *discordgo.Session, m *discordgo.MessageCreate) {
 		userResponseInt, err := strconv.Atoi(m.Content)
 		if err != nil {
-			var.Logger.Info(err)
+			vars.Logger.Info(err)
 			vi.sendMessageToChannel(m.ChannelID, "I accept only numbers.")
 		}
 		if userResponseInt < 1 && userResponseInt > resultCounter {
@@ -443,7 +443,7 @@ func (vi *VoiceInstance) prepYoutubePlaylist(url string, s *discordgo.Session, m
 
 	playlistList, err := yt.GetYoutubePlaylist(playlistID, urlType)
 	if err != nil {
-		vars.Logger.Infof(err)
+		vars.Logger.Info(err)
 		vi.sendMessageToChannel(m.ChannelID, "Unexpected thing when playing playlist. Try Again.")
 		return
 	}

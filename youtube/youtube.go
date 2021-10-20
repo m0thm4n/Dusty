@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	// "pkg/mod/google.golang.org/api@v0.30.0/youtube/v3"
 
 	//"strings"
 
@@ -211,10 +210,6 @@ func ytdlExecute(videoTitle, videoID string) (string, error) {
 	return videoFullPath, nil
 }
 
-func ytdlStream(videoPath string) (string, error) {
-	vide
-}
-
 //SearchDownload combines abilities of GetVideoID and
 //DownloadVideo func's as a standalone function
 func (y *YoutubeAPI) SearchDownload(query string) (*SearchResult, error) {
@@ -259,7 +254,6 @@ func (y *YoutubeAPI) GetInfoByID(id string) (*SearchResult, error) {
 				VideoTitle: snippet.Title,
 				Duration:   util.ParseISO8601(item.ContentDetails.Duration),
 				CoverUrl:   snippet.Thumbnails.High.Url,
-				VideoPath: item.VideoFileDetails.
 			}, nil
 		default:
 			return &SearchResult{}, nil
